@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+Number of Records with hd True:
+<div id="hdtrue"></div> 
+Number of Records with hd False:
+<div id="hdfalse"></div>
+
+<script>
+var xmlhttp = new XMLHttpRequest();
+var urlbase = "http://api.viki.io/v4/videos.json?app=100250a&per_page=10&page=";
+var pgno = 1;
+var hdcountt = 0;
+var hdcountf = 0;
+
+function getresponse(pageno)       //To get the JSON records from each page
+{
+    xmlhttp.open("GET", urlbase + pageno, true);
+    xmlhttp.send();
+}
+
+getresponse(pgno); //To start with the initial page
+
+xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        var myobj = JSON.parse(xmlhttp.responseText);
+
+        gethighdefinitioncount(myobj); 
+
+    }
+}
+
+function gethighdefinitioncount(obj) {          //To Count and Display high definition value.
+
+    var i;
+
+    for (i = 0; i < obj.response.length; i++) {
+
+        if (obj.response[i].flags.hd == true) {
+
+            hdcountt = hdcountt + 1;
+        } else if (obj.response[i].flags.hd == false) {
+            hdcountf = hdcountf + 1;
+        }
+
+    }
+
+    if (obj.more == true) {
+
+        pgno = pgno + 1;
+        getresponse(pgno);
+    }
+    document.getElementById("hdtrue").innerHTML = hdcountt;
+    document.getElementById("hdfalse").innerHTML = hdcountf;
+
+
+}
+</script>
+
+</body>
+</html>
